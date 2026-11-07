@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Two — Your Name</title>
+  <title>Shadow Spine</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="project-extras.css">
 </head>
 <body>
 
@@ -16,43 +17,194 @@
   <main>
     <header class="project-header">
       <p class="label">PROJECT 02</p>
-      <h1>Project Two Title</h1>
+      <h1>Shadow Spine: A Wearable Posture Monitor for Squats &amp; Deadlifts</h1>
       <div class="meta-row">
         <span>ROLE: [your role]</span>
-        <span>TOOLS: [software/tools used]</span>
-        <span>TIMEFRAME: [dates]</span>
+        <span>TOOLS: SolidWorks, 3D printing, Arduino, soldering</span>
+        <span>TIMEFRAME: Fall 2025 (10 weeks)</span>
       </div>
     </header>
 
+    <figure class="project-hero">
+      <img src="images/shadow-spine/hero-final-worn.jpg" alt="Team member wearing the Shadow Spine: an orange linked spine device strapped down the back with a control box at the hip">
+      <figcaption>The final prototype, worn. A chain of six sensing links tracks spinal curvature and buzzes the wearer when posture drifts.</figcaption>
+    </figure>
+
     <section class="project-body">
+
+      <p class="lede">
+        Shadow Spine is a low-cost wearable that teaches safe squat and deadlift form
+        by measuring the curve of your back in real time and giving haptic feedback when
+        you leave a neutral spine. Built for Dartmouth's Introduction to Engineering
+        with Starlone Ekuwom, Daniel Smith, and Jake Romney.
+      </p>
+
+      <div class="stat-row">
+        <div class="stat"><strong>6</strong><span>potentiometer-based joints</span></div>
+        <div class="stat"><strong>~1°</strong><span>max difference vs. protractor</span></div>
+        <div class="stat"><strong>3</strong><span>full prototype generations</span></div>
+        <div class="stat"><strong>#1</strong><span>voted best in class</span></div>
+      </div>
+
       <h2>Problem</h2>
       <p>
-        Describe what you were trying to solve and why it mattered. What
-        constraints did you have — budget, time, materials, requirements?
+        Personal trainers are one of the best ways to learn good lifting form, and one of the
+        most expensive. Most people learning to squat or deadlift get no feedback at all, and
+        the lower and middle spine is the area most vulnerable to lifting injuries. Our question:
+        <em>is there a less expensive way to learn good squat and deadlift form in the gym?</em>
+      </p>
+      <p>
+        Constraints: a 10-week term, a student budget, and a device that had to be comfortable,
+        easy to use mid-lift, and reasonably easy to build.
       </p>
 
       <h2>Approach</h2>
+
+      <h3>Choosing a concept</h3>
       <p>
-        Explain the key decisions you made and why. This is the part that
-        shows your engineering judgment, not just the final result.
+        We brainstormed solutions and wrote out the specifications we wanted: cost, comfort,
+        ease of use, effectiveness, safety, and more. Then we scored each idea (changing the
+        workout, hiring a trainer, a lifting buddy, a training belt, lighter weight, and a wearable
+        spine monitor) in a weighted decision matrix. Shadow Spine had the best weighted score on
+        our scale and became the concept we pursued.
       </p>
-      <ul>
-        <li>Key design decision one</li>
-        <li>Key design decision two</li>
-        <li>Key design decision three</li>
-      </ul>
+      <figure class="fig">
+        <img src="images/shadow-spine/decision-matrix.jpg" alt="Weighted decision matrix comparing six solution ideas across eleven criteria">
+        <figcaption>Weighted decision matrix. Criteria A–K covered cost, comfort, aesthetics, longevity, ease of use, ease of production, effectiveness, adaptability, maintenance, legal/safe/ethical, and impact on others.</figcaption>
+      </figure>
+
+      <h3>Design process</h3>
+      <ol class="process">
+
+        <li>
+          <h3>Sketch and cardboard mockup</h3>
+          <p>
+            We started with a hand sketch of a vest with a row of linkages that move in unison with the
+            spine, then built a quick cardboard-and-strap version to see how a linked "spine" would
+            lie and flex on a back.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/shadow-spine/concept-sketch.jpg" alt="Hand sketch of a vest with a column of spine-like linkages and a power button"><figcaption>Concept sketch</figcaption></figure>
+            <figure class="fig"><img src="images/shadow-spine/cardboard-mockup.jpg" alt="Cardboard linkage mockup on a strap, shown flat and bent"><figcaption>Cardboard mockup, flat and flexed</figcaption></figure>
+          </div>
+        </li>
+
+        <li>
+          <h3>Proving the sensing idea</h3>
+          <p>
+            To measure bending, each side of a linkage joint connects to opposite sides of a
+            potentiometer, so as the joint bends, resistance changes and the Arduino reads a different
+            voltage. A first prototype used a potentiometer in a hinge to confirm the idea worked,
+            and we drew up a wiring schematic for chaining six of them together.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/shadow-spine/hinge-prototype.jpg" alt="Hinge with a potentiometer wired to an Arduino and breadboard"><figcaption>First hinge-and-potentiometer prototype</figcaption></figure>
+            <figure class="fig"><img src="images/shadow-spine/wiring-schematic.jpg" alt="Wiring diagram of six potentiometers, two LEDs, a 9V battery and an Arduino Uno"><figcaption>Wiring plan for six sensors and LED feedback</figcaption></figure>
+          </div>
+        </li>
+
+        <li>
+          <h3>Custom housing in SolidWorks</h3>
+          <p>
+            The hinge worked, but it was far too bulky to wear. We designed a custom link in SolidWorks
+            that holds the potentiometer securely, allows the full range of motion between links,
+            sits flat against the back, and leaves a channel for wiring. One link was 3D printed and
+            tested next to the hinge before we committed to printing a chain.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/shadow-spine/solidworks.jpg" alt="SolidWorks drawings of the link housing: side, isometric, top, bottom, and front views"><figcaption>SolidWorks drawings of the link</figcaption></figure>
+            <figure class="fig"><img src="images/shadow-spine/printed-link.jpg" alt="First 3D-printed link with a potentiometer being held next to an Arduino"><figcaption>First printed link under test</figcaption></figure>
+          </div>
+        </li>
+
+        <li>
+          <h3>First multi-link spine, and a quality problem</h3>
+          <p>
+            Chaining the links gave us a full proof of concept. The user stands in a neutral spine
+            and presses a "zero" button so the Arduino records each sensor's neutral reading. Any
+            deviation beyond a set angle triggers a warning. Early on, though, readings drifted:
+            after bending and returning to neutral, the voltage often didn't come back to where it
+            started. The cause was loose wipers inside the potentiometers. We rebuilt the system and
+            quality-checked each part, and about <strong>70% of the off-the-shelf potentiometers</strong>
+            had too much play to use.
+          </p>
+          <figure class="fig">
+            <img src="images/shadow-spine/multi-link-v1.jpg" alt="First multi-link prototype in white, held by a team member next to the Arduino">
+            <figcaption>First multi-link prototype: it worked, but was too large and clumsy to wear.</figcaption>
+          </figure>
+        </li>
+
+        <li>
+          <h3>Shrinking it down</h3>
+          <p>
+            We sketched a final system: a thin spine strip attached to a shirt with Velcro, a waist
+            strap to hold it tight, and a small control box at the hip. We printed several compact link
+            designs in different colors and compared them, and we settled on the orange version. To
+            make it fit, we cut down the potentiometers and used the thickest wire we could still solder.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/shadow-spine/final-drawing.jpg" alt="Hand-drawn final prototype plan showing the shirt, waist strap, and spine device"><figcaption>Final prototype plan</figcaption></figure>
+            <figure class="fig"><img src="images/shadow-spine/design-options.jpg" alt="Orange, blue, red and green 3D-printed link design variants beside potentiometers"><figcaption>Compact link variants; orange won</figcaption></figure>
+          </div>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/shadow-spine/printed-parts.jpg" alt="Rows of orange 3D-printed link parts ready for assembly"><figcaption>Printed parts for the final chain</figcaption></figure>
+            <figure class="fig"><img src="images/shadow-spine/size-comparison.jpg" alt="First white prototype beside the much smaller orange final prototype on a workbench"><figcaption>First prototype (white) vs. final (orange)</figcaption></figure>
+          </div>
+        </li>
+
+        <li>
+          <h3>Better feedback, smaller electronics</h3>
+          <p>
+            In testing, we found LEDs were hard to notice while concentrating on a lift. We replaced
+            them with a haptic motor that vibrates against the back during poor posture and stops only
+            once form is corrected. We also moved from a full Arduino to an Arduino Nano on a small
+            solderable breadboard so everything fits in a hip-mounted box.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/shadow-spine/haptic-driver.jpg" alt="Haptic motor driver board wired to a small vibration motor"><figcaption>Haptic motor and driver</figcaption></figure>
+            <figure class="fig"><img src="images/shadow-spine/final-electronics.jpg" alt="Final orange spine strip connected by cable to an Arduino Nano on a solderable breadboard"><figcaption>Final spine strip and Nano controller</figcaption></figure>
+          </div>
+        </li>
+
+      </ol>
 
       <h2>Result</h2>
       <p>
-        What happened? Include photos, data, or a link to code/CAD files
-        once you have them to add here.
+        The finished device is a wearable chain of six sensing links, a waist strap, and a hip
+        controller. The wearer zeroes it in neutral spine, lifts, and feels a vibration if their back
+        rounds past the threshold.
       </p>
+      <div class="fig-grid two">
+        <figure class="fig"><img src="images/shadow-spine/final-worn-side.jpg" alt="Team member wearing the device, viewed from the side, adjusting the control box"><figcaption>The final product being worn</figcaption></figure>
+        <figure class="fig"><img src="images/shadow-spine/protractor-test.jpg" alt="Protractor held against the spine device to measure a joint angle"><figcaption>Verifying joint angles with a protractor</figcaption></figure>
+      </div>
+
+      <h3>Testing</h3>
+      <p>
+        We first validated accuracy by comparing the Arduino's angle readings against a protractor
+        across six trials per sensor. Averages agreed to within roughly 1° at every joint, with tight
+        spread between trials. We then took the device to the gym and tested with real lifters. Feedback
+        was largely positive.
+      </p>
+      <div class="fig-grid two">
+        <figure class="fig"><img src="images/shadow-spine/chart-arduino.jpg" alt="Chart of potentiometer angles measured by Arduino code across six trials"><figcaption>Angles measured by the Arduino</figcaption></figure>
+        <figure class="fig"><img src="images/shadow-spine/chart-protractor.jpg" alt="Chart of potentiometer angles measured by protractor across six trials"><figcaption>Same joints measured by protractor</figcaption></figure>
+      </div>
+
+      <div class="callout">
+        <p class="callout-title">Recognition</p>
+        <p>Our project was voted best in the class and received the Philip R. Jackson Award for excellence in engineering from Dartmouth's Thayer School of Engineering.</p>
+      </div>
 
       <h2>What I'd Do Differently</h2>
       <p>
-        A short, honest reflection — this shows maturity and is often what
-        reviewers remember most.
+        Fit was the biggest issue lifters raised: a single-size prototype doesn't fit everyone.
+        With more time I would make the spine adjustable in length (or offer sizes) and test with a wider
+        range of body types earlier. I'd also screen components from day one: finding out late that most
+        of our potentiometers were too loose cost us a rebuild, and a quick incoming-parts check would have
+        saved it.
       </p>
+
     </section>
 
     <a href="index.html" class="back-link">&larr; Back to all projects</a>

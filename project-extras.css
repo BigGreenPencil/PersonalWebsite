@@ -1,0 +1,38 @@
+/* project-extras.css
+   Extra components for long-form project pages (figures, steps, stats).
+   Load AFTER style.css. Uses your existing CSS variables if you have them;
+   the fallbacks after each comma are used otherwise. */
+
+.project-hero { margin: 0 0 3rem; }
+.project-hero img { width: 100%; height: auto; max-height: 560px; object-fit: cover; object-position: center 25%; display: block; border-radius: 6px; }
+.project-hero figcaption, figure.fig figcaption { font-size: .85rem; color: var(--muted, #6b7280); margin-top: .6rem; line-height: 1.45; }
+
+.lede { font-size: 1.15rem; line-height: 1.6; max-width: 62ch; }
+
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0 3rem; }
+.stat { border-top: 2px solid var(--accent, #e8590c); padding-top: .75rem; }
+.stat strong { display: block; font-size: 1.9rem; line-height: 1.1; }
+.stat span { font-size: .85rem; color: var(--muted, #6b7280); }
+
+/* numbered process steps */
+.process { list-style: none; counter-reset: step; padding: 0; margin: 2rem 0; }
+.process > li { counter-increment: step; position: relative; padding: 0 0 3rem 3.5rem; border-left: 1px solid var(--border, #d9dde3); margin-left: 1rem; }
+.process > li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.process > li::before { content: counter(step); position: absolute; left: -1rem; top: -.1rem; width: 2rem; height: 2rem; border-radius: 50%; background: var(--accent, #e8590c); color: #fff; font-weight: 700; font-size: .9rem; display: grid; place-items: center; }
+.process h3 { margin: 0 0 .5rem; font-size: 1.2rem; }
+.process p { margin: 0 0 1rem; max-width: 62ch; }
+
+/* figures */
+figure.fig { margin: 1.25rem 0; }
+figure.fig img { width: 100%; height: auto; display: block; border-radius: 6px; border: 1px solid var(--border, #d9dde3); background: #fff; }
+.fig-grid { display: grid; gap: 1rem; margin: 1.25rem 0; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); align-items: start; }
+.fig-grid figure.fig { margin: 0; }
+.fig-grid.two { grid-template-columns: repeat(2, 1fr); }
+.fig-grid.three { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 640px) { .fig-grid.two, .fig-grid.three { grid-template-columns: 1fr; } }
+
+.callout { border-left: 3px solid var(--accent, #e8590c); background: var(--surface, rgba(128,128,128,.08)); padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; max-width: 62ch; }
+.callout p { margin: 0; }
+.callout .callout-title { font-weight: 700; margin-bottom: .25rem; }
+
+.team { color: var(--muted, #6b7280); font-size: .95rem; }
