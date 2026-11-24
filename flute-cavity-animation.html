@@ -158,31 +158,38 @@ button[aria-pressed="true"]{border-color:var(--ink);font-weight:600}
   }
 
   var t=0, playing=!window.matchMedia("(prefers-reduced-motion: reduce)").matches, last=null;
+  var A0 = 44*(1-Math.exp(-(PH-3.6)/2.4));
+
+  function fluteAmp(ph,pt){
+    if(ph===0) return pt<3.6?0:44*(1-Math.exp(-(pt-3.6)/2.4));
+    if(ph===1) return A0*Math.exp(-pt/10);
+    return A0*Math.exp(-(PH+pt)/10);
+  }
 
   function render(){
     var ph=t<STARTS[1]?0:(t<STARTS[2]?1:2), pt=t-STARTS[ph];
     var low=$("wLow"), leak=$("wLeak");
-    var red=css("--red"), orange=css("--orange");
+    var red=css("--red"), green=css("--green"), orange=css("--orange");
     var tt=t;
 
     // low-Q wave
-    var lowAmp=0, lowCol=red;
-    if(ph===0){lowAmp=34*Math.min(1,pt/1.6);}
-    else if(ph===1){lowAmp=34*Math.exp(-pt/0.45);}
+    var lowAmp=0, lowCol=red, lowOp=1;
+    if(ph===0){lowAmp=34*Math.min(1,pt/1.6);lowCol=red;}
+    else if(ph===1){lowAmp=34*Math.exp(-pt/0.45);lowCol=red;}
     low.setAttribute("stroke",lowCol);
     if(lowAmp>0.4){
       low.setAttribute("d",wave(lowPath,function(s){return lowAmp*Math.sin(Math.PI*s)},36,tt*9));
       low.setAttribute("stroke-opacity",1);
     } else low.setAttribute("stroke-opacity",0);
 
-    // leak through sample (drive on)
+    // leak through sample (phase 1)
     if(ph===0){
       var la=4.5*Math.min(1,Math.max(0,(pt-0.9)/1.2));
       leak.setAttribute("d",wave(leakPath,function(){return la},18,tt*8));
       leak.setAttribute("stroke-opacity",la>0.05?1:0);
     } else leak.setAttribute("stroke-opacity",0);
 
-    // flute modes: blue, then green, then purple build up one at a time
+    // flute modes
     var fade = ph===2 ? Math.min(1,Math.max(0,(6.5-pt)/0.5)) : 1;
     var env=function(st){
       var e0=1-Math.exp(-(PH-st)/1.0);
@@ -196,7 +203,7 @@ button[aria-pressed="true"]{border-color:var(--ink);font-weight:600}
     flutePath(4,44*0.85*eG,tt*4.5+1,eG>0.01?op:0,$("m4"));
     flutePath(5,44*0.7*eB,tt*5.6+2,eB>0.01?op:0,$("m5"));
 
-    // return signal (readout)
+    // return signal (phase 3)
     var ret=$("wRet");
     if(ph===2){
       var s0=Math.min(1,pt/5.2), w=0.2;
@@ -206,6 +213,10 @@ button[aria-pressed="true"]{border-color:var(--ink);font-weight:600}
 
     // pins and annotations
     $("pinIn").setAttribute("opacity",ph===0?0.35+0.25*Math.sin(tt*9):0);
+    var outGlow=0;
+    if(ph===1) outGlow=0.6*Math.exp(-pt/0.6);
+    $("pinOut").setAttribute("stroke",ph===2?orange:red);
+    if(ph===2) outGlow = pt>4.2 ? 0.55+0.25*Math.sin(pt*8) : 0;
     $("pinOut").setAttribute("opacity",0);
 
     $("aLeak").setAttribute("opacity",ph===0&&pt>1.8?1:0);
@@ -238,6 +249,20 @@ button[aria-pressed="true"]{border-color:var(--ink);font-weight:600}
   });
   $("play").textContent=playing?"Pause":"Play";
   requestAnimationFrame(frame);
+})();
+</script>
+<script>
+/* tells the page around it how tall this animation is, so the box can fit it exactly */
+(function(){
+  if(window.parent===window) return;
+  function send(){
+    var c=document.querySelector('.ctrl'); if(!c) return;
+    var h=Math.ceil(c.getBoundingClientRect().bottom+window.scrollY+16);
+    window.parent.postMessage({fluteCavityHeight:h},'*');
+  }
+  window.addEventListener('load',send); window.addEventListener('resize',send);
+  if(window.ResizeObserver) new ResizeObserver(send).observe(document.querySelector('.stage'));
+  setTimeout(send,300); setTimeout(send,1200);
 })();
 </script>
 </body>
