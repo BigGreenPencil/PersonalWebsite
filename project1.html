@@ -3,8 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project One — Your Name</title>
+  <title>Flute Cavity — Your Name</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="project-extras.css">
+  <style>
+    /* extras for this page (equations, embedded animation, image crops) */
+    .eq{margin:1rem 0 1.25rem;padding:.25rem 0;overflow-x:auto;max-width:62ch}
+    .eq math{font-size:1.25rem;margin:.35rem 0}
+    .process ul{max-width:62ch;margin:.5rem 0 1rem;padding-left:1.25rem}
+    .anim-wrap{margin:1.25rem 0;border:1px solid var(--border,#d9dde3);border-radius:6px;overflow:hidden}
+    iframe.anim{display:block;width:100%;height:760px;border:0}
+    @media (max-width:640px){iframe.anim{height:640px}}
+    figure.fig img.tall{aspect-ratio:3/4;object-fit:cover;object-position:center}
+    figure.fig img.product{aspect-ratio:4/3;object-fit:cover;object-position:center 60%}
+  </style>
 </head>
 <body>
 
@@ -15,44 +27,270 @@
 
   <main>
     <header class="project-header">
-      <p class="label">PROJECT 01</p>
-      <h1>Project One Title</h1>
+      <p class="label">PROJECT 04</p>
+      <h1>The Flute Cavity: A High-Q Microwave Cavity for Storing Scattered Photons</h1>
       <div class="meta-row">
         <span>ROLE: [your role]</span>
-        <span>TOOLS: [software/tools used]</span>
-        <span>TIMEFRAME: [dates]</span>
+        <span>TOOLS: SolidWorks, Ansys HFSS, Fusion, Haas CNC mill</span>
+        <span>TIMEFRAME: Summer 2026</span>
       </div>
     </header>
 
+    <figure class="project-hero">
+      <img src="images/final3d.jpg" alt="Four SolidWorks renderings of the final flute cavity design: a straight version and a folded version, each shown solid and with its hidden drilled holes visible">
+      <figcaption>The final design, straight (left) and folded (right). Each is shown solid and with its drilled holes visible.</figcaption>
+    </figure>
+
     <section class="project-body">
-      <h2>Problem</h2>
-      <p>
-        Describe what you were trying to solve and why it mattered. What
-        constraints did you have — budget, time, materials, requirements?
+
+      <p class="lede">
+        The flute cavity is a high-Q microwave cavity built to catch photons scattered by defects in
+        a silicon sample and hold on to them, so their frequencies can be read out at a later time.
+        We designed, simulated, and machined it in Fitz Lab, Mattias Fitzpatrick’s quantum
+        technologies research lab at Dartmouth, together with Sam Bryan.
       </p>
 
-      <h2>Approach</h2>
+      <div class="stat-row">
+        <div class="stat"><strong>7 mK</strong><span>target operating temperature</span></div>
+        <div class="stat"><strong>~1 m</strong><span>length of the first straight design</span></div>
+        <div class="stat"><strong>150 MHz</strong><span>mode spacing in the final design</span></div>
+        <div class="stat"><strong>0.8 cm</strong><span>hole diameter in the final design</span></div>
+      </div>
+
+      <h2>Problem</h2>
       <p>
-        Explain the key decisions you made and why. This is the part that
-        shows your engineering judgment, not just the final result.
+        We are probing a silicon sample with microwave photons and watching for scattering from
+        two-level system (TLS) defects. We were challenged to design and build a high-Q cavity for the
+        scattered photons, where their electromagnetic frequencies can be stored and read out at
+        a later time.
       </p>
-      <ul>
-        <li>Key design decision one</li>
-        <li>Key design decision two</li>
-        <li>Key design decision three</li>
-      </ul>
+      <p>
+        Constraints: one summer, and a final part that has to be cooled to 7 millikelvin inside a
+        dilution refrigerator. That puts a hard limit on size, which turned out to shape most of the design.
+      </p>
+
+      <h2>How it works</h2>
+      <p>
+        The setup pairs a low-Q cavity with the high-Q flute cavity, coupled through the silicon sample.
+        Step through the sequence below: drive the sample, switch the drive off, then read out what the
+        flute cavity stored.
+      </p>
+      <div class="anim-wrap">
+        <iframe class="anim" title="Animation of the flute cavity drive, storage, and readout sequence" loading="lazy" src="flute-cavity-animation.html"></iframe>
+      </div>
+
+      <h2>Approach</h2>
+
+      <h3>Design process</h3>
+      <ol class="process">
+
+        <li>
+          <h3>Starting from first principles</h3>
+          <p>
+            We began with the electric and magnetic field wave equations.
+          </p>
+          <div class="eq"><math display="block"><mrow><msup><mi>∇</mi><mn>2</mn></msup><mi mathvariant="bold">E</mi><mo>=</mo><msub><mi>μ</mi><mn>0</mn></msub><msub><mi>ε</mi><mn>0</mn></msub><mfrac><mrow><msup><mo>∂</mo><mn>2</mn></msup><mi mathvariant="bold">E</mi></mrow><mrow><mo>∂</mo><msup><mi>t</mi><mn>2</mn></msup></mrow></mfrac></mrow></math><math display="block"><mrow><msup><mi>∇</mi><mn>2</mn></msup><mi mathvariant="bold">B</mi><mo>=</mo><msub><mi>μ</mi><mn>0</mn></msub><msub><mi>ε</mi><mn>0</mn></msub><mfrac><mrow><msup><mo>∂</mo><mn>2</mn></msup><mi mathvariant="bold">B</mi></mrow><mrow><mo>∂</mo><msup><mi>t</mi><mn>2</mn></msup></mrow></mfrac></mrow></math></div>
+          <p>We assume a separable solution for the electric field,</p>
+          <div class="eq"><math display="block"><mrow><mi mathvariant="bold">E</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo><mi>z</mi><mo>,</mo><mi>t</mi><mo>)</mo><mo>=</mo><mi>X</mi><mo>(</mo><mi>x</mi><mo>)</mo><mi>Y</mi><mo>(</mo><mi>y</mi><mo>)</mo><mi>Z</mi><mo>(</mo><mi>z</mi><mo>)</mo><mi>T</mi><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math></div>
+          <p>and apply the boundary condition that the electric field parallel to a metal wall must vanish:</p>
+          <div class="eq"><math display="block"><mrow><msub><mi>E</mi><mo>∥</mo></msub><mo>=</mo><mn>0</mn><mspace width="1em"/><mtext>at the metal walls</mtext></mrow></math></div>
+          <p>
+            The boundary conditions require standing-wave solutions, so the allowed wave numbers are
+          </p>
+          <div class="eq"><math display="block"><mtable><mtr><mtd><msub><mi>k</mi><mi>x</mi></msub><mo>=</mo><mfrac><mrow><mi>n</mi><mi>π</mi></mrow><mi>a</mi></mfrac></mtd></mtr><mtr><mtd><msub><mi>k</mi><mi>y</mi></msub><mo>=</mo><mfrac><mrow><mi>m</mi><mi>π</mi></mrow><mi>b</mi></mfrac></mtd></mtr><mtr><mtd><msub><mi>k</mi><mi>z</mi></msub><mo>=</mo><mfrac><mrow><mi>l</mi><mi>π</mi></mrow><mi>d</mi></mfrac></mtd></mtr></mtable></math></div>
+          <p>and therefore</p>
+          <div class="eq"><math display="block"><mrow><msup><mi>k</mi><mn>2</mn></msup><mo>=</mo><msup><mrow><mo>(</mo><mfrac><mrow><mi>n</mi><mi>π</mi></mrow><mi>a</mi></mfrac><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mrow><mo>(</mo><mfrac><mrow><mi>m</mi><mi>π</mi></mrow><mi>b</mi></mfrac><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mrow><mo>(</mo><mfrac><mrow><mi>l</mi><mi>π</mi></mrow><mi>d</mi></mfrac><mo>)</mo></mrow><mn>2</mn></msup></mrow></math></div>
+          <p>
+            Since ω = ck and ω = 2πf, we get the cavity frequency expression
+          </p>
+          <div class="eq"><math display="block"><mrow><msub><mi>f</mi><mrow><mi>n</mi><mi>m</mi><mi>l</mi></mrow></msub><mo>=</mo><mfrac><mi>c</mi><mn>2</mn></mfrac><msqrt><msup><mrow><mo>(</mo><mfrac><mi>n</mi><mi>a</mi></mfrac><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mrow><mo>(</mo><mfrac><mi>m</mi><mi>b</mi></mfrac><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mrow><mo>(</mo><mfrac><mi>l</mi><mi>d</mi></mfrac><mo>)</mo></mrow><mn>2</mn></msup></msqrt></mrow></math></div>
+        </li>
+
+        <li>
+          <h3>Tuning the mode families with geometry</h3>
+          <p>
+            The frequency equation gives rise to families of modes. For a 130 × 5.4 × 1.5 cm cavity there are
+            ten families and 1096 modes between 1 and 15 GHz, far too crowded to use directly.
+          </p>
+          <figure class="fig">
+            <img src="images/modes.png" alt="Mode families for a 130 by 5.4 by 1.5 centimeter cavity, shown as colored tick marks by frequency, with a histogram of modes per 250 megahertz below">
+            <figcaption>All mode families of the cavity: 10 families, 1096 modes in 1–15 GHz.</figcaption>
+          </figure>
+          <p>The cavity dimensions let us pick which families matter:</p>
+          <ul>
+            <li><strong>Small Z dimension</strong> pushes the l mode families to higher frequencies, so they become irrelevant.</li>
+            <li><strong>Y dimension</strong> controls mode spacing.</li>
+            <li><strong>X dimension</strong> controls the base frequency.</li>
+          </ul>
+          <p>
+            Our solution was to grab the first mode family, (n, m, l) = (i, 1, 0), so there are no other
+            families of modes to worry about, then adjust X and Y to get the desired frequency range and
+            mode spacing. The remaining problem: modes within that family are not linearly spaced.
+            The fix was to use a taper in the geometry.
+          </p>
+        </li>
+
+        <li>
+          <h3>A tapered first model</h3>
+          <p>
+            A quadratic taper was added to the Y dimension of the holes of the flute cavity to achieve linear
+            spacing of the resonant modes. After solving analytically for the required geometry, we built the
+            first model in SolidWorks: 2.8–5.2 GHz with 100 MHz linear spacing, in a 130 cm × 5.4 cm × 1.5 cm cavity.
+            We then took the SolidWorks design into Ansys HFSS to simulate the modes.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/model100.jpg" alt="SolidWorks models of the first flute cavity, solid and with its tapered row of holes visible"><figcaption>First model: 2.8–5.2 GHz, 100 MHz spacing</figcaption></figure>
+            <figure class="fig"><img src="images/eig100.png" alt="HFSS eigenmode frequencies for the first model rising linearly from about 2.7 to 3.6 gigahertz over ten modes"><figcaption>HFSS eigenmode frequencies, modes 1–10</figcaption></figure>
+          </div>
+          <p>
+            The model simulated as we expected. The numerical and analytical solutions agreed, which gave us
+            more confidence in the design.
+          </p>
+        </li>
+
+        <li>
+          <h3>Folding it to fit the fridge</h3>
+          <p>
+            The final result has to be cooled to 7 millikelvin in a refrigerator, and a design about a meter long
+            is far too large. We needed a way to make it smaller, so we started a new design to see whether
+            the hole pattern could be folded. In simulation there was no noticeable difference between
+            the folded and straight versions.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/fold250.jpg" alt="Straight and folded versions of the 2.8 to 5.2 gigahertz, 250 megahertz spacing design, solid on top and with holes visible below"><figcaption>2.8–5.2 GHz, 250 MHz spacing: straight (left) vs. folded (right)</figcaption></figure>
+            <figure class="fig"><img src="images/eig250.png" alt="Eigenmode frequencies of the straight and folded 250 megahertz designs overlapping almost exactly, with simulated field plots at right"><figcaption>Eigenmode frequencies and fields under HFSS: folded and straight agree</figcaption></figure>
+          </div>
+        </li>
+
+        <li>
+          <h3>Checking that the holes are sealed</h3>
+          <p>
+            We also checked the depth of the holes to make sure they were “sealed.” Each drilled hole acts as a
+            tiny circular waveguide with a cutoff frequency set by its diameter:
+          </p>
+          <div class="eq"><math display="block"><mrow><msub><mi>f</mi><mi>c</mi></msub><mo>=</mo><mfrac><mrow><mn>1.841</mn><mi>c</mi></mrow><mrow><mi>π</mi><mi>d</mi></mrow></mfrac></mrow></math></div>
+          <p>
+            Since the cavity modes sit below this cutoff, the field cannot propagate up the hole. It decays
+            exponentially along the hole’s depth (the “stem”), and the length of the stem determines the Q:
+            how well sealed the cavity is.
+          </p>
+        </li>
+
+        <li>
+          <h3>The final design</h3>
+          <p>
+            Putting it together gave the final design: 150 MHz spacing with 0.8 cm diameter holes, in both a
+            straight and a folded layout (the renderings are at the top of this page). The HFSS field plots show the lowest modes spreading along the row of
+            holes in each.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/hfss_straight.jpg" alt="Three HFSS electric field plots of the straight final design, showing one, five and ten field lobes"><figcaption>Straight final design: HFSS electric field</figcaption></figure>
+            <figure class="fig"><img src="images/hfss_folded.jpg" alt="Three HFSS electric field plots of the folded final design, showing field lobes distributed along the folded row of holes"><figcaption>Folded final design: HFSS electric field</figcaption></figure>
+          </div>
+          <figure class="fig">
+            <img src="images/eigfinal.png" alt="Eigenmode frequencies for the final design, straight and folded, rising from about 3.4 to 4.7 gigahertz over ten modes with the folded curve slightly higher">
+            <figcaption>Final design eigenmode frequencies, straight vs. folded. Both are linearly spaced; the folded version sits slightly higher.</figcaption>
+          </figure>
+        </li>
+
+        <li>
+          <h3>Learning to machine it</h3>
+          <p>
+            With the design finished, we had to realize the part on a CNC machine. The approach follows the
+            deep-drilling and cavity-opening method in Phys. Rev. Lett. 127, 107701 (2021).
+          </p>
+          <figure class="fig">
+            <img src="images/prl.png" alt="Four-step machining diagram: drill holes from the top, drill from the bottom, open the cavity sideways with a cutter, then repeat three times">
+            <figcaption>The machining process we followed (Phys. Rev. Lett. 127, 107701).</figcaption>
+          </figure>
+          <p>
+            Before handing anything to the machine, I made a few test cavities on the manual end mill, where
+            everything is controlled by hand, so I could feel the stress the drill was under. That told me what
+            feed rates to program on the Haas mill. We had to be very careful and use peck drilling to keep clearing
+            aluminum chips from the hole, because the hole depth was right at the limit of the depth-to-diameter
+            rating for the drill bit.
+          </p>
+          <figure class="fig">
+            <img src="images/endmill.jpg" alt="Left: a drill on the manual end mill over a vise. Right: close-up of three drilled holes in an aluminum block">
+            <figcaption>Practicing the final hole depth on the manual end mill, before delegating the drilling to the Haas mill.</figcaption>
+          </figure>
+        </li>
+
+        <li>
+          <h3>A test cavity on the end mill</h3>
+          <p>
+            Using the end mill, we made a simplified test cavity to answer our biggest worry before committing to the
+            final part: whether the drill holes were deep enough for the evanescent seals to work. It was a crude
+            manufacturing process, made with only drill bits and not cleaned or honed on the inside. Tools were still
+            on order, and metal flakes were still left inside.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/simple.png" alt="HFSS simulation of the simplified test cavity with its list of simulated eigenmode frequencies"><figcaption>HFSS model of the simplified test cavity</figcaption></figure>
+            <figure class="fig"><img class="product" src="images/product.jpg" alt="The machined aluminum test cavity with two SMA connectors attached and blue cables connected"><figcaption>The test cavity with SMA pins attached</figcaption></figure>
+          </div>
+          <p>
+            We did observe mode resonances in the test cavity, which relieved our largest worry: the drill holes being
+            too shallow and the evanescent seals not working.
+          </p>
+        </li>
+
+        <li>
+          <h3>Measuring the test cavity</h3>
+          <p>
+            These measurements are from the simplified test cavity, not the final design.
+          </p>
+          <div class="fig-grid two">
+            <figure class="fig"><img src="images/res_sma.png" alt="Two network analyzer traces: baseline noise on the left, and with the SMA pins in place on the right, which shows sharp dips"><figcaption>Baseline noise (left) vs. with SMA pins (right)</figcaption></figure>
+            <figure class="fig"><img src="images/res_diff.png" alt="Raw traces of retracted versus base pins and their difference, showing sharp resonance dips near 8.2 and 9 gigahertz"><figcaption>Raw traces and their difference, with resonances near 8.2 and 9 GHz</figcaption></figure>
+          </div>
+          <div class="callout">
+            <p class="callout-title">Takeaways</p>
+            <p>
+              The flute cavity method does support resonant modes. The modes are not exactly where the simulation said
+              they would be (our hypothesis: flakes left inside the cavity from drilling may contribute). The placement of
+              the SMA pins is very important and very sensitive.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <h3>Machining the final design on the Haas</h3>
+          <p>
+            Now that we had tested the simplified cavity and our summer was coming to an end, we went for machining the
+            final design. First, we had to learn how to use the Haas CNC machine. We used the Fusion toolpath software to
+            program the part and generate the G-code. As a trial, we first made a 1 × 1 × 1 inch cube, which refined our
+            skills at finding the part and at flipping and reorienting the toolpath program.
+          </p>
+          <figure class="fig">
+            <img src="images/fusion.jpg" alt="Fusion toolpath simulation of a cube being milled, next to the finished aluminum test cube">
+            <figcaption>Fusion toolpath simulation, and the finished test cube.</figcaption>
+          </figure>
+          <p>We then machined the final design.</p>
+          <div class="fig-grid two">
+            <figure class="fig"><img class="tall" src="images/cnc_coolant.jpg" alt="Haas mill running with coolant spraying onto the aluminum block"><figcaption>Cutting with coolant on the Haas</figcaption></figure>
+            <figure class="fig"><img class="tall" src="images/cnc_drill.jpg" alt="Drill above the aluminum block with rows of holes already drilled"><figcaption>Drilling the hole array in the final part</figcaption></figure>
+          </div>
+        </li>
+
+      </ol>
 
       <h2>Result</h2>
       <p>
-        What happened? Include photos, data, or a link to code/CAD files
-        once you have them to add here.
+        The final design has been simulated, folded to fit the fridge, and machined. The test cavity showed that the
+        flute cavity method supports resonant modes.
+      </p>
+      <div class="callout">
+        <p class="callout-title">Final design testing</p>
+        <p>Measurements of the final design are still to come and will be added here.</p>
+      </div>
+
+      <h2>What’s Next</h2>
+      <p>
+        The test cavity results motivate two follow-ups. A cleaner machining process, with reamer and ball-hone
+        polishing steps, is being implemented on the Haas by Oliver and Sam. And the sensitivity to SMA pin placement
+        motivates an SMA design and analysis in HFSS, which Chris is mainly working on.
       </p>
 
-      <h2>What I'd Do Differently</h2>
-      <p>
-        A short, honest reflection — this shows maturity and is often what
-        reviewers remember most.
-      </p>
     </section>
 
     <a href="index.html" class="back-link">&larr; Back to all projects</a>

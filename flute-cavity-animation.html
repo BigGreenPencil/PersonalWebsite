@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flute cavity: how the readout works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eef2f1; --grid:#d3dcdb; --ink:#1d2b2f; --muted:#5a6b6f; --wall:#2a3a3e;
+  --sample:#9aa7ab; --red:#d6362f; --green:#1f9d55; --purple:#6a3fc2; --blue:#3b6fd4; --orange:#e8820c;
+  --chip:#ffffffcc; --line:#b7c4c3;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10191c; --grid:#1b282c; --ink:#e6eeee; --muted:#93a6aa; --wall:#c4d2d4;
+    --sample:#6f7f84; --red:#ff6b62; --green:#43d17d; --purple:#a98bff; --blue:#6f9bff; --orange:#ffa23a;
+    --chip:#182428cc; --line:#2c3e43;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10191c; --grid:#1b282c; --ink:#e6eeee; --muted:#93a6aa; --wall:#c4d2d4;
+  --sample:#6f7f84; --red:#ff6b62; --green:#43d17d; --purple:#a98bff; --blue:#6f9bff; --orange:#ffa23a;
+  --chip:#182428cc; --line:#2c3e43;
+}
+html,body{height:100%;margin:0}
+body{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink); font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  display:flex; justify-content:center;
+}
+main{width:100%;max-width:980px;padding:12px 12px 16px;box-sizing:border-box}
+h1{font-size:1.25rem;font-weight:600;margin:0 0 2px}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 14px}
+.stage{background:var(--chip);border:1px solid var(--line);border-radius:10px;padding:8px;backdrop-filter:blur(2px)}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:inherit;fill:var(--ink)}
+.lbl{paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round}
+.cap{margin:14px 0 10px;min-height:92px}
+.cap h2{font-size:1.05rem;margin:0 0 4px;font-weight:600;display:flex;align-items:center;gap:8px}
+.cap h2 .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.cap p{margin:0;max-width:68ch;line-height:1.5;font-size:.95rem}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:inherit;font-size:.9rem;color:var(--ink);background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;min-height:40px}
+button:hover{border-color:var(--muted)}
+button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+button[aria-pressed="true"]{border-color:var(--ink);font-weight:600}
+.bar{flex:1;min-width:120px;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+  <div class="stage">
+  <svg viewBox="0 0 800 400" role="img" aria-label="Animated diagram of a low-Q cavity coupled through a silicon sample to a high-Q flute cavity">
+    <!-- cavities -->
+    <rect x="40" y="80" width="210" height="250" rx="12" fill="none" stroke="var(--wall)" stroke-width="3"/>
+    <rect x="250" y="80" width="510" height="250" rx="12" fill="none" stroke="var(--wall)" stroke-width="3"/>
+    <rect x="262" y="92" width="486" height="226" rx="9" fill="none" stroke="var(--wall)" stroke-width="1.2" stroke-dasharray="2 5" opacity=".7"/>
+    <text x="145" y="64" text-anchor="middle" font-size="15" font-weight="600">Low Q cavity</text>
+    <text x="505" y="64" text-anchor="middle" font-size="15" font-weight="600">High Q flute cavity</text>
+
+    <!-- pins -->
+    <line x1="0" y1="140" x2="150" y2="140" stroke="var(--wall)" stroke-width="3" stroke-linecap="round"/>
+    <line x1="0" y1="290" x2="150" y2="290" stroke="var(--wall)" stroke-width="3" stroke-linecap="round"/>
+    <line id="pinOut" x1="0" y1="290" x2="150" y2="290" stroke="var(--green)" stroke-width="7" stroke-linecap="round" opacity="0"/>
+    <line id="pinIn" x1="0" y1="140" x2="150" y2="140" stroke="var(--red)" stroke-width="7" stroke-linecap="round" opacity="0"/>
+
+    <!-- sample -->
+    <rect x="170" y="200" width="170" height="16" rx="2" fill="var(--sample)" stroke="var(--wall)" stroke-width="2"/>
+
+    <!-- waves -->
+    <path id="wLow" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path id="wLeak" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"/>
+    <path id="m3" fill="none" stroke="var(--purple)" stroke-width="2.5" stroke-linecap="round"/>
+    <path id="m4" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"/>
+    <path id="m5" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round"/>
+    <path id="wRet" fill="none" stroke="var(--orange)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- annotations -->
+    <g id="aLeak" opacity="0"><text x="540" y="372" text-anchor="middle" font-size="13" style="fill:var(--red)">A small amount leaks through the sample into the flute cavity</text></g>
+    <g id="aOut" opacity="0"><text x="40" y="372" font-size="13" style="fill:var(--green)">Low-Q resonances drain out through the output pin</text></g>
+    <g id="aFlute" opacity="0"><text x="540" y="372" text-anchor="middle" font-size="13" style="fill:var(--purple)">Resonant frequencies stay alive in the high-Q cavity</text></g>
+    <g id="aRet" opacity="0"><text x="40" y="372" font-size="13" style="fill:var(--orange)">Flute resonances return through the sample and are read at the output</text></g>
+    <!-- labels, drawn last so nothing covers them -->
+    <g class="lbl" font-size="13">
+      <text x="50" y="126">Input</text>
+      <text x="50" y="314">Output</text>
+      <text x="210" y="236" text-anchor="middle" font-size="12" style="fill:var(--muted)">silicon</text>
+      <text x="210" y="251" text-anchor="middle" font-size="12" style="fill:var(--muted)">sample</text>
+    </g>
+  </svg>
+  </div>
+
+  <div class="cap" aria-live="polite">
+    <h2><span class="dot" id="capDot"></span><span id="capTitle"></span></h2>
+    <p id="capBody"></p>
+  </div>
+
+  <div class="ctrl">
+    <button id="play" type="button">Pause</button>
+    <button class="step" data-i="0" type="button" aria-pressed="true">1 Drive on</button>
+    <button class="step" data-i="1" type="button" aria-pressed="false">2 Drive off</button>
+    <button class="step" data-i="2" type="button" aria-pressed="false">3 Readout</button>
+    <div class="bar" aria-hidden="true"><i id="prog"></i></div>
+  </div>
+</main>
+
+<script>
+(function(){
+  var PH = 7, P1 = 6.5, STARTS = [0, PH, PH+P1], TOTAL = PH+P1+PH;
+  var $ = function(id){return document.getElementById(id)};
+  var css = function(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()};
+
+  var captions = [
+    {t:"1. Drive on", c:"--red", b:"The input is on, driving microwave photons across the 3–5 GHz band into the low-Q cavity. Some of the microwave photons hit defects in the silicon sample and are scattered into the high Q flute cavity where they are stored and their frequencies are preserved."},
+    {t:"2. Drive off", c:"--green", b:"The drive is turned off. All EM resonances in the low-Q cavity vanish quickly through the output pin. The EM resonant frequencies stay alive much longer in the high-Q flute cavity."},
+    {t:"3. Readout", c:"--orange", b:"The flute cavity resonances eventually make their way back through the silicon sample and are read through the output pin."}
+  ];
+
+  function makePath(pts){
+    var segs=[],len=0,i;
+    for(i=0;i<pts.length-1;i++){
+      var dx=pts[i+1][0]-pts[i][0], dy=pts[i+1][1]-pts[i][1], l=Math.hypot(dx,dy);
+      segs.push({x:pts[i][0],y:pts[i][1],dx:dx/l,dy:dy/l,l:l,s:len}); len+=l;
+    }
+    return {len:len,at:function(d){
+      for(var k=0;k<segs.length;k++){var g=segs[k]; if(d<=g.s+g.l||k===segs.length-1){var u=Math.min(d-g.s,g.l); return {x:g.x+g.dx*u,y:g.y+g.dy*u,nx:-g.dy,ny:g.dx};}}
+    }};
+  }
+  function wave(path,ampFn,wl,phase){
+    var n=Math.ceil(path.len/3),d="";
+    for(var i=0;i<=n;i++){
+      var s=i/n,p=path.at(s*path.len),a=ampFn(s);
+      var off=a*Math.sin(2*Math.PI*s*path.len/wl-phase);
+      d+=(i?"L":"M")+(p.x+p.nx*off).toFixed(1)+" "+(p.y+p.ny*off).toFixed(1);
+    }
+    return d;
+  }
+
+  var lowPath = makePath([[150,140],[150,290]]);
+  var leakPath= makePath([[172,208],[338,208]]);
+  var retPath = makePath([[338,208],[185,208],[160,240],[150,290]]);
+  var X0=266,X1=744,YC=205;
+
+  function flutePath(n,A,ph,op,el){
+    var d="",N=160;
+    for(var i=0;i<=N;i++){
+      var x=X0+(X1-X0)*i/N, y=YC-A*Math.sin(n*Math.PI*i/N)*Math.cos(ph);
+      d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1);
+    }
+    el.setAttribute("d",d); el.setAttribute("stroke-opacity",op);
+  }
+
+  var t=0, playing=!window.matchMedia("(prefers-reduced-motion: reduce)").matches, last=null;
+
+  function render(){
+    var ph=t<STARTS[1]?0:(t<STARTS[2]?1:2), pt=t-STARTS[ph];
+    var low=$("wLow"), leak=$("wLeak");
+    var red=css("--red"), orange=css("--orange");
+    var tt=t;
+
+    // low-Q wave
+    var lowAmp=0, lowCol=red;
+    if(ph===0){lowAmp=34*Math.min(1,pt/1.6);}
+    else if(ph===1){lowAmp=34*Math.exp(-pt/0.45);}
+    low.setAttribute("stroke",lowCol);
+    if(lowAmp>0.4){
+      low.setAttribute("d",wave(lowPath,function(s){return lowAmp*Math.sin(Math.PI*s)},36,tt*9));
+      low.setAttribute("stroke-opacity",1);
+    } else low.setAttribute("stroke-opacity",0);
+
+    // leak through sample (drive on)
+    if(ph===0){
+      var la=4.5*Math.min(1,Math.max(0,(pt-0.9)/1.2));
+      leak.setAttribute("d",wave(leakPath,function(){return la},18,tt*8));
+      leak.setAttribute("stroke-opacity",la>0.05?1:0);
+    } else leak.setAttribute("stroke-opacity",0);
+
+    // flute modes: blue, then green, then purple build up one at a time
+    var fade = ph===2 ? Math.min(1,Math.max(0,(6.5-pt)/0.5)) : 1;
+    var env=function(st){
+      var e0=1-Math.exp(-(PH-st)/1.0);
+      if(ph===0) return pt<st?0:1-Math.exp(-(pt-st)/1.0);
+      if(ph===1) return e0*Math.exp(-pt/10);
+      return e0*Math.exp(-(P1+pt)/10);
+    };
+    var op=(ph===0?0.55:0.95)*fade;
+    var eB=env(2.4), eG=env(3.6), eP=env(4.8);
+    flutePath(3,44*eP,tt*3.4,eP>0.01?op:0,$("m3"));
+    flutePath(4,44*0.85*eG,tt*4.5+1,eG>0.01?op:0,$("m4"));
+    flutePath(5,44*0.7*eB,tt*5.6+2,eB>0.01?op:0,$("m5"));
+
+    // return signal (readout)
+    var ret=$("wRet");
+    if(ph===2){
+      var s0=Math.min(1,pt/5.2), w=0.2;
+      ret.setAttribute("d",wave(retPath,function(s){var g=Math.exp(-Math.pow((s-s0)/w,2)); return 13*g*Math.min(1,(1-s)/0.06)},26,tt*10));
+      ret.setAttribute("stroke-opacity",1);
+    } else ret.setAttribute("stroke-opacity",0);
+
+    // pins and annotations
+    $("pinIn").setAttribute("opacity",ph===0?0.35+0.25*Math.sin(tt*9):0);
+    $("pinOut").setAttribute("opacity",0);
+
+    $("aLeak").setAttribute("opacity",ph===0&&pt>1.8?1:0);
+    $("aOut").setAttribute("opacity",ph===1&&pt>0.4?1:0);
+    $("aFlute").setAttribute("opacity",ph===1&&pt>1.5?1:0);
+    $("aRet").setAttribute("opacity",ph===2&&pt>0.8?1:0);
+
+    // caption + controls
+    var c=captions[ph];
+    if($("capTitle").textContent!==c.t){
+      $("capTitle").textContent=c.t; $("capBody").textContent=c.b; $("capDot").style.background="var("+c.c+")";
+      document.querySelectorAll(".step").forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.i===ph))});
+    }
+    $("prog").style.width=(t/TOTAL*100)+"%";
+  }
+
+  function frame(ts){
+    if(last===null) last=ts;
+    var dt=Math.min(0.05,(ts-last)/1000); last=ts;
+    if(playing){ t+=dt; if(t>=TOTAL) t-=TOTAL; }
+    render();
+    requestAnimationFrame(frame);
+  }
+
+  $("play").addEventListener("click",function(){
+    playing=!playing; this.textContent=playing?"Pause":"Play";
+  });
+  document.querySelectorAll(".step").forEach(function(b){
+    b.addEventListener("click",function(){ t=STARTS[+b.dataset.i]+0.01; render(); });
+  });
+  $("play").textContent=playing?"Pause":"Play";
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
